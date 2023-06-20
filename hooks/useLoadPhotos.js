@@ -22,7 +22,7 @@ const useLoadPhotos = () => {
 				{
 					params: {
 						page: page,
-						api_key: "DEMO_KEY",
+						api_key: apiKey,
 						...(camera && { camera: camera }),
 						...(sunDate ? { sol: sunDate } : { sol: 1000 }),
 						...(earthDate && { earth_date: earthDate }),
