@@ -4,25 +4,22 @@ import React, { createContext, useState } from "react";
 const MyContext = createContext();
 
 const MyProvider = ({ children }) => {
-	const [filteredData, setFilteredData] = useState([]);
-	const [originalData, setOriginalData] = useState([]);
+	const [filters, setFilters] = useState({
+		rover: "curiosity",
+		camera: "",
+		earthDate: "",
+		sunDate: "",
+		filters: ""
+	})
 
 	const applyFilters = (filters) => {
-		const { rover, camera, earthDay, sunDay } = filters;
-		// Apply the filters to the original data
-		let filteredResult = originalData;
-		if (rover) filteredResult = filteredResult.filter((item) => item.rover === rover);
-		if (camera) filteredResult = filteredResult.filter((item) => item.camera === camera);
-		if (earthDay)filteredResult = filteredResult.filter((item) => item.earthDay === earthDay);
-		if (sunDay) filteredResult = filteredResult.filter((item) => item.sunDay === sunDay);
-		setFilteredData(filteredResult);
+		const { rover, camera, earthDate, sunDate } = filters;
+		setFilters({rover, camera, earthDate, sunDate })
 	};
 
 	const contextValue = {
-		originalData,
-		filteredData,
-		setOriginalData,
 		applyFilters,
+		filters
 	};
 
 	return <MyContext.Provider value={contextValue}>{children}</MyContext.Provider>;

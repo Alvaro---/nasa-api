@@ -6,21 +6,21 @@ import style from './filter.module.css'
 const FilterBar = () => {
   const { applyFilters } = useContext(MyContext);
 
-  const [rover, setRover] = useState('');
+  const [rover, setRover] = useState('curiosity');
   const [camera, setCamera] = useState('');
-  const [earthDay, setEarthDay] = useState('');
-  const [sunDay, setSunDay] = useState('');
+  const [earthDate, setEarthDate] = useState('');
+  const [sunDate, setSunDate] = useState('');
   const [savedConfigs, setSavedConfigs] = useState([]);
 
   useEffect(() => {
     const filters = {
       rover,
       camera,
-      earthDay,
-      sunDay
+      earthDate,
+      sunDate
     };
     applyFilters(filters);
-  }, [rover, camera, earthDay, sunDay]);
+  }, [rover, camera, earthDate, sunDate]);
 
   useEffect(() => {
     const storedConfigs = JSON.parse(localStorage.getItem('filterConfigs')) || [];
@@ -36,19 +36,26 @@ const FilterBar = () => {
   };
 
   const handleEarthDayChange = (event) => {
-    setEarthDay(event.target.value);
+    setEarthDate(event.target.value);
   };
 
   const handleSunDayChange = (event) => {
-    setSunDay(event.target.value);
+    setSunDate(event.target.value);
   };
+
+  const handleClearFilter = () => {
+    setCamera('')
+    setRover('curiosity')
+    setEarthDate('')
+    setSunDate('')
+  }
 
   const handleSaveConfig = () => {
     const config = {
       rover,
       camera,
-      earthDay,
-      sunDay,
+      earthDay: earthDate,
+      sunDay: sunDate,
     };
 
     let savedConfigs = JSON.parse(localStorage.getItem('filterConfigs')) || [];
@@ -59,12 +66,13 @@ const FilterBar = () => {
     alert('Configuration saved!');
   };
 
+
   const handleLoadConfig = (event) => {
     const selectedConfig = JSON.parse(event.target.value);
     setRover(selectedConfig.rover);
     setCamera(selectedConfig.camera);
-    setEarthDay(selectedConfig.earthDay);
-    setSunDay(selectedConfig.sunDay);
+    setEarthDate(selectedConfig.earthDay);
+    setSunDate(selectedConfig.sunDay);
   };
 
   return (
@@ -100,27 +108,37 @@ const FilterBar = () => {
       </div>
       <div className={style.row}>
         <div className={style.field}>
-          <label>
-            Camera:
-          </label>
-          <input type="text" value={camera} onChange={handleCameraChange} />
+          <label htmlFor="camera">Camera:</label>
+          <select id="camera" value={camera} onChange={handleCameraChange}>
+            <option value="">Select a camera</option>
+            <option value="FHAZ">Front Hazard Avoidance Camera</option>
+            <option value="RHAZ">Rear Hazard Avoidance Camera</option>
+            <option value="MAST">Mast Camera</option>
+            <option value="CHEMCAM">Chemistry and Camera Complex</option>
+            <option value="MAHLI">Mars Hand Lens Imager</option>
+            <option value="MARDI">Mars Descent Imager</option>
+            <option value="NAVCAM">Navigation Camera</option>
+            <option value="PANCAM">Panoramic Camera</option>
+            <option value="MINITES">Miniature Thermal Emission Spectrometer (Mini-TES)</option>
+          </select>
         </div>
         <div className={style.field}>
           <label>
             Earth Day:
           </label>
-          <input type="date" value={earthDay} onChange={handleEarthDayChange} />
+          <input type="date" value={earthDate} onChange={handleEarthDayChange} />
         </div>
         <div className={style.field}>
           <label>
             Sun Day:
           </label>
-          <input type="number" value={sunDay} onChange={handleSunDayChange} />
+          <input type="number" value={sunDate} onChange={handleSunDayChange} />
         </div>
       </div>
 
       <div className="row">
         <button onClick={handleSaveConfig}>Save Filter</button>
+        <button onClick={handleClearFilter}>Clear Filter</button>
       </div>
     </div>
   );

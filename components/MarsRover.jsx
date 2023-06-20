@@ -2,39 +2,37 @@
 import useLoadPhotos from '@/hooks/useLoadPhotos';
 import CardPhoto from './CardPhoto';
 import styles from "./components.module.css";
-import { useContext, useEffect } from 'react';
-import { MyContext } from '@/context/Context';
+import { useEffect } from 'react';
 
 const MarsRover = () => {
 
-  const { data, setData } = useContext(MyContext);
-  console.log("aaaaaaa",data);
   const { photos, loading, error, loadMorePhotos } = useLoadPhotos();
   console.log(photos)
 
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop ===
+        window.innerHeight + document.documentElement.scrollTop >=
         document.documentElement.offsetHeight
       ) {
         loadMorePhotos();
-        setTimeout(()=>{
-          console.log("time")
-        }, 10000)
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    const debouncedHandleScroll = debounce(handleScroll, 200);
+
+    window.addEventListener('scroll', debouncedHandleScroll);
   }, [loadMorePhotos]);
 
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
 
   if (error) {
     return <div>Error fetching Mars photos.</div>;
@@ -47,6 +45,9 @@ const MarsRover = () => {
           <CardPhoto key={photo.id} photo={photo} />
         ))}
       </div>
+      {
+        loading && <div className={styles.loading}>Loading...</div>
+      }
     </div>
   );
 }
